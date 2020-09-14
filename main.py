@@ -70,20 +70,23 @@ if __name__=='__main__':
     w_g_sum=np.zeros(w.shape)
     b_g_sum=np.zeros(b.shape)
 
-    epoch=1000
+    epoch=2000
     lr=0.1
+    batch_size=8
 
     for i in range(epoch):
-        w_g=0
-        b_g=0
-        w_g,b_g=_gradient(train_x,train_label,w,b)
-        w_g_sum+=w_g**2
-        b_g_sum+=b_g**2
-        w-=lr/w_g_sum**0.5*w_g
-        b-=lr/b_g_sum**0.5*b_g
-
+        for i in range(int(np.floor(train_x.shape[0]/batch_size))):
+            x=train_x[i*batch_size:(i+1)*batch_size]
+            y=train_label[i*batch_size:(i+1)*batch_size]
+            w_g=0
+            b_g=0
+            w_g,b_g=_gradient(x,y,w,b)
+            w_g_sum+=w_g**2
+            b_g_sum+=b_g**2
+            w-=lr/w_g_sum**0.5*w_g
+            b-=lr/b_g_sum**0.5*b_g
         y_pre=model(train_x,w,b)
-        #y_pre=np.round(y_pre)   #TODO: 将数据转换成bool类型
+            #y_pre=np.round(y_pre)   #TODO: 将数据转换成bool类型
         loss=np.sum(_cross_entropy_loss(y_pre,train_label))/len(train_x)
         print("loss is %f"%loss)
 

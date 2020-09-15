@@ -118,7 +118,6 @@ if __name__=='__main__':
         # val_loss.append(loss)
         # val_acc.append(acc)
         loss_v=0
-        print("loss is on the train_set is %f ,on the val_set if %f" % (loss,loss_v))
         print("the %d epoch loss is on the train_set is %f ,on the val_set is %f" % (j,loss, loss_v))
     print("finished train! the mean of the loss is %f , the accuracy is %f "%(float(np.mean(loss)),np.max(train_accu)))
 

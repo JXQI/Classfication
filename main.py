@@ -51,6 +51,12 @@ def _gradient(x,label,w,b):
 #b_g_sum=0
 #def _Adagrad(w_g,b_g):
 
+#打乱数据顺序
+def _shuffle(x,y):
+    shuffle_temp=np.arange(len(x)) #生成随机种子
+    np.random.shuffle(shuffle_temp)
+    return x[shuffle_temp],y[shuffle_temp]
+
 def train_dev_spilt(x,label,ratio):
     # 返回train_x,train_label,val_x,val_label
     train_size=int(len(x)*ratio)    #注意此处len()对于nump也是可以用的
@@ -64,8 +70,10 @@ if __name__=='__main__':
     x,label,test=Data_Deal('./data/X_train','./data/Y_train','./data/X_test')
     #将数据划分为训练集和验证集
     #train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.1)
-    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.0001)
+    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.8)
     print(train_x.shape,train_label.shape,val_x.shape,val_label.shape)
+    #打乱训练数据
+    train_x,train_label=_shuffle(train_x,train_label)
     #初始化参数
     w=np.zeros(train_x.shape[1])
     b=np.zeros(1)
@@ -83,7 +91,7 @@ if __name__=='__main__':
     val_loss=[]
     w_store=[]
     b_store=[]
-    for i in range(epoch):
+    for j in range(epoch):
         for i in range(int(np.floor(train_x.shape[0]/batch_size))):
             x=train_x[i*batch_size:(i+1)*batch_size]
             y=train_label[i*batch_size:(i+1)*batch_size]
@@ -105,13 +113,14 @@ if __name__=='__main__':
 
         #处理验证集
         val_y_pre=model(val_x,w,b)
-        val_loss = np.sum(_cross_entropy_loss(val_y_pre, val_label)) / len(val_x)
+        loss_v = np.sum(_cross_entropy_loss(val_y_pre, val_label)) / len(val_x)
         acc = accuary(val_y_pre, val_label)
         val_loss.append(loss)
         val_acc.append(acc)
 
-        print("loss is on the train_set is %f ,on the val_set if %f" % (loss,val_loss))
-    print("finished train! the mean of the loss is %f"%float(np.mean(loss)))
+        print("loss is on the train_set is %f ,on the val_set if %f" % (loss,loss_v))
+        print("the %d epoch loss is on the train_set is %f ,on the val_set is %f" % (j,loss, loss_v))
+    print("finished train! the mean of the loss is %f , the accuracy is %f "%(float(np.mean(loss)),np.max(train_accu)))
 
     plt.title("the loss of train/val with epoch")
     plt.xlabel("epoch")

@@ -64,7 +64,7 @@ if __name__=='__main__':
     x,label,test=Data_Deal('./data/X_train','./data/Y_train','./data/X_test')
     #将数据划分为训练集和验证集
     #train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.1)
-    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.0001)
+    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.8)
     print(train_x.shape,train_label.shape,val_x.shape,val_label.shape)
     #初始化参数
     w=np.zeros(train_x.shape[1])

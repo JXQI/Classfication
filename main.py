@@ -63,14 +63,20 @@ def train_dev_spilt(x,label,ratio):
     return x[:train_size],label[:train_size],x[train_size:],label[train_size:]
 #求准确率
 def accuary(pre,label):
-    return 1-np.mean(np.abs(pre-label))
+    #return 1-np.mean(np.abs(pre-label))
+    #print(np.round(pre),label.reshape(pre.shape))
+    pre=np.round(pre)
+    label=label.reshape(pre.shape)  #注意此处的输出值
+    return sum([1 if pre[i]==label[i] else 0 for i in range(len(pre))])/len(pre)
 
 if __name__=='__main__':
     #数据加载
     x,label,test=Data_Deal('./data/X_train','./data/Y_train','./data/X_test')
     #将数据划分为训练集和验证集
     #train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.1)
-    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.5)
+    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.2)
+    #TODO:注意这里内存不够，只取出来验证集的一部分
+    val_x, val_label,_,_= train_dev_spilt(val_x, val_label, 0.2)
     print(train_x.shape,train_label.shape,val_x.shape,val_label.shape)
     #打乱训练数据
     train_x,train_label=_shuffle(train_x,train_label)
@@ -82,7 +88,7 @@ if __name__=='__main__':
     w_g_sum=np.zeros(w.shape)
     b_g_sum=np.zeros(b.shape)
 
-    epoch=2000
+    epoch=1000
     lr=0.1
     batch_size=8
     train_accu=[]
@@ -112,29 +118,29 @@ if __name__=='__main__':
         b_store.append(b)
 
         #处理验证集
-        # val_y_pre=model(val_x,w,b)
-        # loss_v = np.sum(_cross_entropy_loss(val_y_pre, val_label)) / len(val_x)
-        # acc = accuary(val_y_pre, val_label)
-        # val_loss.append(loss)
-        # val_acc.append(acc)
-        loss_v=0
+        val_y_pre=model(val_x,w,b)
+        loss_v = np.sum(_cross_entropy_loss(val_y_pre, val_label)) / len(val_x)
+        acc_v = accuary(val_y_pre, val_label)
+        val_loss.append(loss_v)
+        val_acc.append(acc_v)
         print("the %d epoch loss is on the train_set is %f ,on the val_set is %f" % (j,loss, loss_v))
-    print("finished train! the mean of the loss is %f , the accuracy is %f "%(float(np.mean(loss)),np.max(train_accu)))
+    print("finished train! the train mean of the loss is %f , the accuracy is %f "%(float(np.mean(loss)),np.max(train_accu)))
+    print("finished train! the val mean of the loss is %f , the accuracy is %f " % (float(np.mean(loss_v)), np.max(val_acc)))
 
     plt.title("the loss of train/val with epoch")
     plt.xlabel("epoch")
     plt.ylabel("loss")
     plt.plot(range(epoch),train_loss,color='red',label='train')
-    #plt.plot(range(epoch), val_loss,color='green',label='val')
+    plt.plot(range(epoch), val_loss,color='green',label='val')
+    plt.legend()
     plt.show()
-    #plt.legend()
     plt.title("the accuray of train/val with epoch")
-    plt.xlabel("accuracy")
-    plt.ylabel("loss")
+    plt.xlabel("epoch")
+    plt.ylabel("accuracy")
     plt.plot(range(epoch), train_accu,color='red',label='train')
-    #plt.plot(range(epoch), val_acc,color='green',label='val')
+    plt.plot(range(epoch), val_acc,color='green',label='val')
+    plt.legend()
     plt.show()
-    #plt.legend()
 
 
 

@@ -1,5 +1,6 @@
 import numpy as np
 import os
+from matplotlib import pyplot as plt
 
 def Data_Deal(train,label,test):
     #加载数据集
@@ -54,7 +55,9 @@ def train_dev_spilt(x,label,ratio):
     # 返回train_x,train_label,val_x,val_label
     train_size=int(len(x)*ratio)    #注意此处len()对于nump也是可以用的
     return x[:train_size],label[:train_size],x[train_size:],label[train_size:]
-
+#求准确率
+def accuary(pre,label):
+    return 1-np.mean(np.abs(pre-label))
 
 if __name__=='__main__':
     #数据加载
@@ -73,7 +76,12 @@ if __name__=='__main__':
     epoch=2000
     lr=0.1
     batch_size=8
-
+    train_accu=[]
+    train_loss=[]
+    val_acc=[]
+    val_loss=[]
+    w_store=[]
+    b_store=[]
     for i in range(epoch):
         for i in range(int(np.floor(train_x.shape[0]/batch_size))):
             x=train_x[i*batch_size:(i+1)*batch_size]
@@ -88,6 +96,36 @@ if __name__=='__main__':
         y_pre=model(train_x,w,b)
             #y_pre=np.round(y_pre)   #TODO: 将数据转换成bool类型
         loss=np.sum(_cross_entropy_loss(y_pre,train_label))/len(train_x)
-        print("loss is %f"%loss)
+        acc=accuary(y_pre,train_label)
+        train_loss.append(loss)
+        train_accu.append(acc)
+        w_store.append(w)
+        b_store.append(b)
+
+        #处理验证集
+        val_y_pre=model(val_x,w,b)
+        val_loss = np.sum(_cross_entropy_loss(val_y_pre, val_label)) / len(val_x)
+        acc = accuary(val_y_pre, val_label)
+        val_loss.append(loss)
+        val_acc.append(acc)
+
+        print("loss is on the train_set is %f ,on the val_set if %f" % (loss,val_loss))
+    print("finished train! the mean of the loss is %f"%float(np.mean(loss)))
+
+    plt.title("the loss of train with epoch")
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.plot(range(epoch),train_loss)
+    plt.show()
+    #plt.legend()
+    plt.title("the loss of val with epoch")
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.plot(range(epoch), val_loss)
+    plt.show()
+    #plt.legend()
+
+
+
 
 

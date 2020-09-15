@@ -63,11 +63,8 @@ if __name__=='__main__':
     #数据加载
     x,label,test=Data_Deal('./data/X_train','./data/Y_train','./data/X_test')
     #将数据划分为训练集和验证集
-<<<<<<< HEAD
-    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.1)
-=======
-    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.8)
->>>>>>> ebedff131d3156c180171e58a9f9152a92415bf1
+    #train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.1)
+    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.0001)
     print(train_x.shape,train_label.shape,val_x.shape,val_label.shape)
     #初始化参数
     w=np.zeros(train_x.shape[1])
@@ -116,16 +113,18 @@ if __name__=='__main__':
         print("loss is on the train_set is %f ,on the val_set if %f" % (loss,val_loss))
     print("finished train! the mean of the loss is %f"%float(np.mean(loss)))
 
-    plt.title("the loss of train with epoch")
+    plt.title("the loss of train/val with epoch")
     plt.xlabel("epoch")
     plt.ylabel("loss")
-    plt.plot(range(epoch),train_loss)
+    plt.plot(range(epoch),train_loss,color='red',label='train')
+    plt.plot(range(epoch), val_loss,color='green',label='val')
     plt.show()
     #plt.legend()
-    plt.title("the loss of val with epoch")
-    plt.xlabel("epoch")
+    plt.title("the accuray of train/val with epoch")
+    plt.xlabel("accuracy")
     plt.ylabel("loss")
-    plt.plot(range(epoch), val_loss)
+    plt.plot(range(epoch), train_accu,color='red',label='train')
+    plt.plot(range(epoch), val_acc,color='green',label='val')
     plt.show()
     #plt.legend()
 

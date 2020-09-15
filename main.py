@@ -70,7 +70,7 @@ if __name__=='__main__':
     x,label,test=Data_Deal('./data/X_train','./data/Y_train','./data/X_test')
     #将数据划分为训练集和验证集
     #train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.1)
-    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.1)
+    train_x,train_label,val_x,val_label=train_dev_spilt(x,label,0.2)
     print(train_x.shape,train_label.shape,val_x.shape,val_label.shape)
     #打乱训练数据
     train_x,train_label=_shuffle(train_x,train_label)
@@ -112,12 +112,12 @@ if __name__=='__main__':
         b_store.append(b)
 
         #处理验证集
-        val_y_pre=model(val_x,w,b)
-        loss_v = np.sum(_cross_entropy_loss(val_y_pre, val_label)) / len(val_x)
-        acc = accuary(val_y_pre, val_label)
-        val_loss.append(loss)
-        val_acc.append(acc)
-
+        # val_y_pre=model(val_x,w,b)
+        # loss_v = np.sum(_cross_entropy_loss(val_y_pre, val_label)) / len(val_x)
+        # acc = accuary(val_y_pre, val_label)
+        # val_loss.append(loss)
+        # val_acc.append(acc)
+        loss_v=0
         print("loss is on the train_set is %f ,on the val_set if %f" % (loss,loss_v))
         print("the %d epoch loss is on the train_set is %f ,on the val_set is %f" % (j,loss, loss_v))
     print("finished train! the mean of the loss is %f , the accuracy is %f "%(float(np.mean(loss)),np.max(train_accu)))
@@ -126,14 +126,14 @@ if __name__=='__main__':
     plt.xlabel("epoch")
     plt.ylabel("loss")
     plt.plot(range(epoch),train_loss,color='red',label='train')
-    plt.plot(range(epoch), val_loss,color='green',label='val')
+    #plt.plot(range(epoch), val_loss,color='green',label='val')
     plt.show()
     #plt.legend()
     plt.title("the accuray of train/val with epoch")
     plt.xlabel("accuracy")
     plt.ylabel("loss")
     plt.plot(range(epoch), train_accu,color='red',label='train')
-    plt.plot(range(epoch), val_acc,color='green',label='val')
+    #plt.plot(range(epoch), val_acc,color='green',label='val')
     plt.show()
     #plt.legend()
 

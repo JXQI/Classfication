@@ -6,3 +6,7 @@
 1.根据人们的个人信息，判断是否年收入超过5000美元
 2.分别利用logistic regression和generative model来实现
 
+
+实验结果：
+
+accuarcy 和 loss 关于epoch的曲线：见loss.png和accuracy.png
